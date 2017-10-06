@@ -9,55 +9,58 @@ def getKey():
     file.close()
     return key
 
-#the mctc adress
-mctcAdress = "mctc+minneapolis"
-#getting the api key
-apiKey = getKey()
+class Transit:
+    def __init__(self):
+        #the mctc adress
+        self.mctcAdress = "mctc+minneapolis"
+        #getting the api key
+        self.apiKey = getKey()
 
-#asking the user if they are traveling from or to MCTC
-travel = input(str("From or to MCTC: "))
-if travel == "to":
-    #asking for the current adress and formating to fit in URL
-    currentAdress = input(str("Enter current adress: "))
-    currentAdress = currentAdress.replace(" ","+")
-    formatedURL = "https://maps.googleapis.com/maps/api/" \
-          "directions/json?origin={0}&destination={1}&mode=transit&key={2}".format(currentAdress,mctcAdress,apiKey)
+    #asking the user if they are traveling from or to MCTC
+    def getRouteTo(self,adress):
 
-    request = requests.get(formatedURL)
-    print(request)
-    json_data = json.loads(request.content)
-    #printing necessary data
-    instructions = json_data["routes"][0]["legs"][0]["steps"][0]["html_instructions"]
-    bus = json_data["routes"][0]["legs"][0]["steps"][1]["transit_details"]["headsign"]
-    departureTime = json_data["routes"][0]["legs"][0]["steps"][1]["transit_details"]["departure_time"]["text"]
-    arrivalTime = json_data["routes"][0]["legs"][0]["steps"][1]["transit_details"]["arrival_time"]["text"]
-    busTravelTime = json_data["routes"][0]["legs"][0]["steps"][1]["duration"]["text"]
-    route = json_data["routes"][0]["legs"][0]["steps"][1]["transit_details"]["line"]["url"]
+        #asking for the current adress and formating to fit in URL
+        formatedURL = "https://maps.googleapis.com/maps/api/" \
+                  "directions/json?origin={0}&destination={1}&mode=transit&key={2}".format(adress,self.mctcAdress,self.apiKey)
 
-    print("Instructions: " + instructions +"\nBus: "+ bus + "\nDeparture time: " + departureTime+"\nArrival time: " + arrivalTime
-          +"\nBus travel time: " + busTravelTime + "\nRoute: " + route)
+        request = requests.get(formatedURL)
+        json_data = json.loads(request.content)
+        #printing necessary data
+        instructions = json_data["routes"][0]["legs"][0]["steps"][0]["html_instructions"]
+        bus = json_data["routes"][0]["legs"][0]["steps"][1]["transit_details"]["headsign"]
+        departureTime = json_data["routes"][0]["legs"][0]["steps"][1]["transit_details"]["departure_time"]["text"]
+        arrivalTime = json_data["routes"][0]["legs"][0]["steps"][1]["transit_details"]["arrival_time"]["text"]
+        busTravelTime = json_data["routes"][0]["legs"][0]["steps"][1]["duration"]["text"]
+        route = json_data["routes"][0]["legs"][0]["steps"][1]["transit_details"]["line"]["url"]
 
-elif travel == "from":
-    #asking user for destination adress
-    currentAdress = input(str("Enter destination adress: "))
-    currentAdress = currentAdress.replace(" ", "+")
-    formatedURL = "https://maps.googleapis.com/maps/api/" \
-                  "directions/json?origin={0}&destination={1}&mode=transit&key={2}".format(mctcAdress, currentAdress,
-                                                                                           apiKey)
-    request = requests.get(formatedURL)
-    print(request)
-    json_data = json.loads(request.content)
-    instructions = json_data["routes"][0]["legs"][0]["steps"][0]["html_instructions"]
-    bus = json_data["routes"][0]["legs"][0]["steps"][1]["transit_details"]["headsign"]
-    departureTime = json_data["routes"][0]["legs"][0]["steps"][1]["transit_details"]["departure_time"]["text"]
-    arrivalTime = json_data["routes"][0]["legs"][0]["steps"][1]["transit_details"]["arrival_time"]["text"]
-    busTravelTime = json_data["routes"][0]["legs"][0]["steps"][1]["duration"]["text"]
-    route = json_data["routes"][0]["legs"][0]["steps"][1]["transit_details"]["line"]["url"]
+        response = "Instructions: " + instructions +"\nBus: "+ bus + "\nDeparture time: " + departureTime+"\nArrival time: " + arrivalTime+\
+                   "\nBus travel time: " + busTravelTime + "\nRoute: " + route
 
-    print(
-        "Instructions: " + instructions + "\nBus: " + bus + "\nDeparture time: " + departureTime + "\nArrival time: " + arrivalTime
-        + "\nBus travel time: " + busTravelTime + "\nRoute: " + route)
+        return response
 
+    def getRouteFrom(self,adress):
+
+        #asking user for destination adress
+        formatedURL = "https://maps.googleapis.com/maps/api/" \
+                          "directions/json?origin={0}&destination={1}&mode=transit&key={2}".format(self.mctcAdress, adress,
+                                                                                                   self.apiKey)
+        request = requests.get(formatedURL)
+        json_data = json.loads(request.content)
+        instructions = json_data["routes"][0]["legs"][0]["steps"][0]["html_instructions"]
+        bus = json_data["routes"][0]["legs"][0]["steps"][1]["transit_details"]["headsign"]
+        departureTime = json_data["routes"][0]["legs"][0]["steps"][1]["transit_details"]["departure_time"]["text"]
+        arrivalTime = json_data["routes"][0]["legs"][0]["steps"][1]["transit_details"]["arrival_time"]["text"]
+        busTravelTime = json_data["routes"][0]["legs"][0]["steps"][1]["duration"]["text"]
+        route = json_data["routes"][0]["legs"][0]["steps"][1]["transit_details"]["line"]["url"]
+
+        response = "Instructions: " + instructions + "\nBus: " + bus + "\nDeparture time: " + departureTime + "\nArrival time: " + arrivalTime\
+                   + "\nBus travel time: " + busTravelTime + "\nRoute: " + route
+
+        return response
+
+#transit = Transit()
+#response = transit.getRouteFrom("4130 james avenue north")
+#print(response)
 
 
 
