@@ -44,7 +44,7 @@ class MyStreamListener(tweepy.StreamListener):
             api.update_status(message[140:], in_reply_to_status_id=id)
         else:
             api.update_status(message, in_reply_to_status_id=id)
-            
+
     def on_error(self, status_code):
         if status_code == 420:
             return False
